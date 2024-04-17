@@ -168,13 +168,6 @@ def main():
         st.write(df.head())
         chat_history = []
 
-        # Display chat history button
-        show_history = st.button("Show Chat History")
-        if show_history:
-            st.sidebar.title("Chat History")
-            for item in chat_history:
-                st.sidebar.write(f"{item['role']}: {item['content']}")
-
         # Get user query
         user_query = st.text_input("Enter your query:")
 

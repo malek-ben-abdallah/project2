@@ -141,8 +141,18 @@ def main():
                             st.error(f"Error executing the generated code: {e}")
                             st.code(traceback.format_exc())
 
-            if not st.button("Ask Another Question"):
+            if st.button("Ask Another Question"):
+                continue
+            else:
                 break
+
+        if chat_history:
+            st.markdown("## Chat History")
+            for message in chat_history:
+                if message["role"] == "user":
+                    st.text_input("User:", value=message["content"], key=message["content"], disabled=True)
+                elif message["role"] == "assistant":
+                    st.text_area("Assistant:", value=message["content"], key=message["content"], disabled=True)
 
 if __name__ == "__main__":
     main()

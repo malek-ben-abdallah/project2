@@ -166,22 +166,31 @@ def main():
         df = pd.read_csv(uploaded_file)
         st.write("Dataset:")
         st.write(df.head())
-        chat_history = []
+        # Get chat history from session state
+        session_state = st.session_state.setdefault(chat_history=[], show_chat_history=False)
 
-        # Get user query
+        # Display chat history button
+        show_history = st.button("Show Chat History")
+        if show_history:
+            session_state["show_chat_history"] = not session_state["show_chat_history"]
+            caching.clear_cache()
+
+        if session_state["show_chat_history"]:
+            st.sidebar.title("Chat History")
+            for item in session_state["chat_history"]:
+                st.sidebar.write(f"{item['role']}: {item['content']}")
+
+        # Get user queries
         user_query = st.text_input("Enter your query:")
 
         if user_query:
-            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
+            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, session_state["chat_history"], api_key1)
 
             if generated_code:
+                # Update chat history in session state
+                session_state["chat_history"] = chat_history
                 st.markdown(generated_text)
-                #st.code(generated_code, language="python")
-                plot_area = st.empty()
-
-                plot_area.pyplot(exec(generated_code))           
-
-
+                st.code(generated_code, language="python")
                 if error_message:
                     st.error(f"Errors occurred: {error_message}")
                 else:
@@ -192,8 +201,10 @@ def main():
                         st.error(f"Error executing the generated code: {e}")
                         st.code(traceback.format_exc())
 
-        st.text_input("Ask another question:")
-
-
 if __name__ == "__main__":
     main()
+
+
+
+
+

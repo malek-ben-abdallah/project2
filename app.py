@@ -4,7 +4,6 @@ from openai import OpenAI
 import openai
 import re
 import traceback
-from streamlit import caching
 
 def generate_code(user_input, df, chat_history, api_key1):
     client = OpenAI(api_key=api_key1)

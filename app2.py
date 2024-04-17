@@ -5,7 +5,6 @@ import openai
 import re
 import traceback
 import sys
-import tables
 
 # Set up OpenAI API key (replace with your actual key)
 # Initialize the client

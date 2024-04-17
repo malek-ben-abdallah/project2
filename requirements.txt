@@ -5,3 +5,5 @@ plotly
 pycountry
 country_converter
 tabulate
+matplotlib
+seaborn

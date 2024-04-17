@@ -1,4 +1,5 @@
 openai
+OpenAI
 pandas
 plotly
 pycountry

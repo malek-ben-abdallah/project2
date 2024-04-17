@@ -7,22 +7,7 @@ import traceback
 
 def generate_code(user_input, df, chat_history, api_key1):
     client = OpenAI(api_key=api_key1)
-    """
-    Generate Python code to visualize or analyze the provided dataset based on the user's query.
-
-    Args:
-        user_input (str): The user's query for visualizing or analyzing the data.
-        
-        df (pandas.DataFrame): The dataset to be used for generating the code.
-        
-        chat_history (list): A list of dictionaries containing the chat history between the user and the model.
-
-    Returns:
-        str: The generated text based on the user's query and the provided dataset.
-        str: The generated Python code based on the user's query and the provided dataset.
-        list: The updated chat history.
-        str: Any error message encountered during code execution.
-    """
+    
     # Generate a description of the dataset
     dataset_description = f"This dataset contains {len(df.columns)} columns: {', '.join(df.columns)}."
 
@@ -123,7 +108,6 @@ def extract_python_code(text):
     extracted_code = "\n".join(code_snippets)
     return extracted_code.strip()
 
-
 def main():
     st.title("Data Analysis Tool")
     api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
@@ -136,34 +120,29 @@ def main():
         st.write("Dataset:")
         st.write(df.head())
 
-        # Initialize chat history
         chat_history = []
 
-        # Display chat history button
-        show_history = st.button("Show Chat History")
-        if show_history:
-            st.sidebar.title("Chat History")
-            for item in chat_history:
-                st.sidebar.write(f"{item['role']}: {item['content']}")
+        while True:
+            user_query = st.text_input("Enter your query:")
 
-        # Get user queries
-        user_query = st.text_input("Enter your query:")
+            if user_query:
+                generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
 
-        if user_query:
-            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
+                if generated_code:
+                    st.markdown(generated_text)
+                    st.code(generated_code, language="python")
+                    if error_message:
+                        st.error(f"Errors occurred: {error_message}")
+                    else:
+                        try:
+                            exec(generated_code)
+                            st.success("Code ran smoothly.")
+                        except Exception as e:
+                            st.error(f"Error executing the generated code: {e}")
+                            st.code(traceback.format_exc())
 
-            if generated_code:
-                st.markdown(generated_text)
-                st.code(generated_code, language="python")
-                if error_message:
-                    st.error(f"Errors occurred: {error_message}")
-                else:
-                    try:
-                        exec(generated_code)
-                        st.success("Code ran smoothly.")
-                    except Exception as e:
-                        st.error(f"Error executing the generated code: {e}")
-                        st.code(traceback.format_exc())
+            if not st.button("Ask Another Question"):
+                break
 
 if __name__ == "__main__":
     main()

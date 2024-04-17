@@ -161,7 +161,7 @@ def main():
 
         if user_query:
             chat_history = []
-            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history)
+            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
 
             if generated_code:
                 st.code(generated_code, language="python")

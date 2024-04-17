@@ -5,7 +5,7 @@ import openai
 import re
 import traceback
 
-def generate_code(user_input, df, chat_history, api_key1):
+def generate_code(user_input, df, api_key1):
     client = OpenAI(api_key=api_key1)
     
     # Generate a description of the dataset
@@ -49,56 +49,27 @@ Sample Rows:
 {sample_rows}
 """
 
-    chat_history.append({"role": "user", "content": user_input})
-
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         temperature=0,
         seed=2024,
         messages=[
             {"role": "system", "content": "You are a helpful data analysis tool."},
-            *chat_history,
+            {"role": "user", "content": user_input},
             {"role": "user", "content": prompt},
         ],
     )
 
     try:
         generated_text = response.choices[0].message.content
-        chat_history.append({"role": "assistant", "content": generated_text})
 
         # Extract the Python code from the generated text
         generated_code = extract_python_code(generated_text)
 
-        # Send the generated code back to the model for debugging
-        debug_prompt = f"""
-Evaluate the following code for relevance to the user's query and check for errors:
-
-User Query: {user_input}
-
-Generated Code:
-{generated_code}
-
-If the code has errors, provide the corrected code along with an explanation of the errors and the corrections made.
-"""
-        debug_response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            temperature=0,
-            seed=2024,
-            messages=[
-                {"role": "system", "content": "You are a helpful data analysis tool."},
-                *chat_history,
-                {"role": "user", "content": debug_prompt},
-            ],
-        )
-        debug_output = debug_response.choices[0].message.content
-
-        if "Corrected Code:" in debug_output:
-            generated_code = debug_output.split("Corrected Code:")[-1].strip()
-
-        return generated_text, generated_code, chat_history, ""
+        return generated_text, generated_code, ""
     except Exception as e:
         error_message = str(e)
-        return generated_text, generated_code, chat_history, error_message
+        return generated_text, "", error_message
 
 def extract_python_code(text):
     # Extract Python code between "```python" and "```"
@@ -120,15 +91,21 @@ def main():
         st.write("Dataset:")
         st.write(df.head())
 
-        chat_history = []
+        questions = []
+        responses = []
+        errors = []
 
         while True:
             user_query = st.text_input("Enter your query:")
 
             if user_query:
-                generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
+                generated_text, generated_code, error_message = generate_code(user_query, df, api_key1)
 
                 if generated_code:
+                    questions.append(user_query)
+                    responses.append(generated_text)
+                    errors.append(error_message)
+
                     st.markdown(generated_text)
                     st.code(generated_code, language="python")
                     if error_message:
@@ -146,13 +123,13 @@ def main():
             else:
                 break
 
-        if chat_history:
+        if questions:
             st.markdown("## Chat History")
-            for message in chat_history:
-                if message["role"] == "user":
-                    st.text_input("User:", value=message["content"], key=message["content"], disabled=True)
-                elif message["role"] == "assistant":
-                    st.text_area("Assistant:", value=message["content"], key=message["content"], disabled=True)
+            for i in range(len(questions)):
+                st.subheader(f"Question: {questions[i]}")
+                st.markdown(f"Response: {responses[i]}")
+                if errors[i]:
+                    st.error(f"Errors occurred: {errors[i]}")
 
 if __name__ == "__main__":
     main()

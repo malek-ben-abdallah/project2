@@ -91,12 +91,20 @@ def main():
         st.write("Dataset:")
         st.write(df.head())
 
+        questions = []
+        responses = []
+        errors = []
+
         while True:
             user_query = st.text_input("Enter your query:")
             if user_query:
                 generated_text, generated_code, error_message = generate_code(user_query, df, api_key1)
 
                 if generated_code:
+                    questions.append(user_query)
+                    responses.append(generated_text)
+                    errors.append(error_message)
+
                     st.markdown(generated_text)
                     st.code(generated_code, language="python")
                     if error_message:
@@ -113,6 +121,14 @@ def main():
                 continue
             else:
                 break
+
+        if questions:
+            st.markdown("## Chat History")
+            for i in range(len(questions)):
+                st.subheader(f"Question: {questions[i]}")
+                st.markdown(f"Response: {responses[i]}")
+                if errors[i]:
+                    st.error(f"Errors occurred: {errors[i]}")
 
 if __name__ == "__main__":
     main()

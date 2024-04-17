@@ -4,6 +4,7 @@ from openai import OpenAI
 import openai
 import re
 import traceback
+from streamlit import caching
 
 def generate_code(user_input, df, chat_history, api_key1):
     client = OpenAI(api_key=api_key1)
@@ -136,29 +137,23 @@ def main():
         st.write("Dataset:")
         st.write(df.head())
 
-        # Get chat history from session state
-        session_state = st.session_state.setdefault(chat_history=[], show_chat_history=False)
+        # Initialize chat history
+        chat_history = []
 
         # Display chat history button
         show_history = st.button("Show Chat History")
         if show_history:
-            session_state["show_chat_history"] = not session_state["show_chat_history"]
-            caching.clear_cache()
-
-        if session_state["show_chat_history"]:
             st.sidebar.title("Chat History")
-            for item in session_state["chat_history"]:
+            for item in chat_history:
                 st.sidebar.write(f"{item['role']}: {item['content']}")
 
         # Get user queries
         user_query = st.text_input("Enter your query:")
 
         if user_query:
-            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, session_state["chat_history"], api_key1)
+            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
 
             if generated_code:
-                # Update chat history in session state
-                session_state["chat_history"] = chat_history
                 st.markdown(generated_text)
                 st.code(generated_code, language="python")
                 if error_message:

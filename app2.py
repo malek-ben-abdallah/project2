@@ -3,7 +3,6 @@ import pandas as pd
 from openai import OpenAI
 import openai
 import re
-import pyplot
 import traceback
 import sys
 

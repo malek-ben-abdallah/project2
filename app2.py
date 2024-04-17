@@ -85,7 +85,7 @@ Sample Rows:
 {sample_rows}
 
 
-[Provide your chain-of-thought (context and explanations) for the generated visualizations or analyses and what steps you did to get to this result.]
+[Provide your chain-of-thought (reasoning and explanations) for the generated visualizations or analyses and what steps you did to get to this result.]
 
 **debug**: The generated code will be sent back to the model for an evaluation of its relevance to the user's query, along with code error checking and debugging. If the code provides errors, the model will check what the error is and correct the code, providing a working and relevant version.
 

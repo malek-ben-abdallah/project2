@@ -1,306 +1,176 @@
-
-# -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
-
-# -*- coding: utf-8 -*-
-"""
-##### Author     : Malek Ben Abdallah
-"""
-
-
 import streamlit as st
 import pandas as pd
-import numpy as np
+from openai import OpenAI
+import openai
+import re
+import traceback
+from streamlit import caching
+
+def generate_code(user_input, df, chat_history, api_key1):
+    client = OpenAI(api_key=api_key1)
+    """
+    Generate Python code to visualize or analyze the provided dataset based on the user's query.
+
+    Args:
+        user_input (str): The user's query for visualizing or analyzing the data.
+        
+        df (pandas.DataFrame): The dataset to be used for generating the code.
+        
+        chat_history (list): A list of dictionaries containing the chat history between the user and the model.
+
+    Returns:
+        str: The generated text based on the user's query and the provided dataset.
+        str: The generated Python code based on the user's query and the provided dataset.
+        list: The updated chat history.
+        str: Any error message encountered during code execution.
+    """
+    # Generate a description of the dataset
+    dataset_description = f"This dataset contains {len(df.columns)} columns: {', '.join(df.columns)}."
+
+    # The column names and data types
+    column_info = pd.DataFrame({'column': df.columns, 'data_type': df.dtypes})
+
+    # Get a few sample rows from the dataset
+    sample_rows = df.head(5).to_dict(orient='records')
 
-import plotly as py
-
-
-#from plotly.offline import iplot
-#import chart_studio.plotly as py
-import plotly.figure_factory as ff
-import plotly.express as px
-import pycountry  
-
-import country_converter 
-
-import plotly.graph_objs as go
-#from wordcloud import WordCloud
-
-st.title('project')
-
-df = pd.read_csv("Data/ds_salaries.csv", index_col=[0])
-#st.write(data) #displays the table of data
-
-#Created on Thu Sep 22 2022
-
-
-
-
-    
-    
-    
-#Converting country codes to country names for employee_residence and company_location
-resi_country_list = []
-comp_country_list = []
-for country_code in df.employee_residence:
-    resi_country_list.append(pycountry.countries.get(alpha_2=country_code).name)
-
-for country_code in df.company_location:
-    comp_country_list.append(pycountry.countries.get(alpha_2=country_code).name)
-
-df['employee_residence'] = resi_country_list
-df['company_location'] = comp_country_list
-
-
-
-
-#Replacing some of the values to understand the graphs clearly
-df.remote_ratio.replace([100,50,0], ['Remote', 'Hybrid' ,'On-site'],inplace = True)
-df.experience_level.replace(['EN','MI','SE', 'EX'], ['Entry', 'Mid', 'Senior', 'Executive'], inplace = True)
-df.company_size.replace(['L','M','S'], ['Large', 'Medium', 'Small'], inplace = True)
-
-# Add subholder to see the raw data on your page 
-# add a toggle to checkbox to see the data 
-if st.checkbox('Show raw data'):
-    st.subheader('Raw data')
-    st.write(df)
-
-st.header('Exploratory Data Analysis')
-st.markdown('In this section, we will explore the dataset to extract some useful insights.')
-st.subheader('1- Top 10 Jobs')
-
-
-
-st.write('There are', df['job_title'].value_counts().size, 'job titles in the dataset')
-top10_job_title = df['job_title'].value_counts()[:10]
-fig = px.bar(y=top10_job_title.values, 
-             x=top10_job_title.index, 
-             color = top10_job_title.index,
-             color_discrete_sequence=px.colors.sequential.Magenta_r  ,
-             text=top10_job_title.values,
-             title= 'Top 10 Job Titles',
-             template= 'plotly_dark' )
-fig.update_layout(
-    xaxis_title="Job Titles",
-    yaxis_title="count",
-    font = dict(size=13,family="Franklin Gothic"))
-
-st.plotly_chart(fig)
-
-st.markdown(' => **Job market is mostly dominated by Data Scientists,Data Engineers, Data Analysts, and Machine Learning Engineers.**')
-
-#/2 
-st.subheader('2-Employee Location Distribution Map')
-
-converted_country = country_converter.convert(names=df['employee_residence'], to="ISO3")
-df['employee_residence'] = converted_country
-residence = df['employee_residence'].value_counts()
-fig = px.choropleth(locations=residence.index,
-                    color=residence.values,
-                    color_continuous_scale=px.colors.sequential.Sunsetdark  ,
-                    title = 'Employee Loaction Distribution Map')
-
-st.plotly_chart(fig)
-
-st.markdown(' => **From the map above we can conclude that Data science jobs are mostly common in the United States with over 300 job entries then less in Britain, canada and india.**')
-
-#/3
-st.subheader('3-Salary Distribution')
-
-fig = px.box(y=df['salary_in_usd'],template= 'plotly_dark', title = 'Salary in USD')
-fig.update_layout(font = dict(size=17))
-st.write(fig)
-
-st.markdown('**=> Most employees are getting paid around 100,000 USD.**') 
-
-st.markdown('**=> Higher salaries are few especially over 300,000 USD.**')
-
-st.markdown('**=> We have an outliers of 600,000 USD.**')
-
-#/4
-st.subheader('4-Experience_level distribution')
-
-grouped_size = df['experience_level'].value_counts()
-
-
-fig = px.bar(df, x=grouped_size.values, y=grouped_size.index,color = grouped_size.index,
-             color_discrete_sequence=px.colors.sequential.Sunset_r,   title= 'Distribution of experience_level')
-
-fig.update_layout(
-    yaxis_title="experience_level",
-    xaxis_title=" Count")
-
-st.plotly_chart(fig)
-
-st.markdown('**Number of senior and mid-level employees are the highest in the dataset.**')
-st.markdown('**Meanwhile, the number of junior-level and expert-level employees is relatively low.**')
-
-
-#/5
-st.subheader('5-Experience level VS Salary')
-
-fig=px.scatter(df, x = 'salary_in_usd', y = 'experience_level', size = 'salary_in_usd', hover_name = 'job_title', color = 'job_title', 
-           color_discrete_sequence=px.colors.qualitative.Alphabet, template = 'plotly_dark',
-           animation_frame = 'work_year', title = 'Experience level VS Salary').update_yaxes(categoryarray = ['Entry', 'Mid', 'Senior', 'Executive'])
-
-st.plotly_chart(fig)
-st.markdown('**Employees with higher experience get higher salaries So we conclude that the salary and Experience level have a positive correlation**')
-st.markdown('**In 2020 the salary increase between Mid-level and Entry-level positions are not that important compared with the mid and the senior position**')
-
-
-
-#/5+
-
-job_list = ["All"]
-with open("Data/job_names.txt") as f:
-    for line in f:
-        job_list.append(line.replace("'","").split(",")[0].strip())
-
-st.subheader("Data Science Salaries by Job")
-
-
-
-option = st.selectbox(
-     'Please choose a data science job',
-     job_list)
-
-if option != "All":
-    fig = px.box(df[df["job_title"] == option], x="experience_level", y="salary_in_usd", points="all",
-                 title="Average annual salaries in $ of " + option + " by experience level")
-    st.plotly_chart(fig)
-
-    
-
-    
-else:
-    fig = px.box(df, x="experience_level", y="salary_in_usd", points="all",
-                 title="Average annual salaries in $ of " + option + " by experience level")
-    st.plotly_chart(fig)
-
-
-
-
-
-#/6
-st.subheader('6-Company size')
-
-grouped_size = df['company_size'].value_counts()
-
-fig = px.pie(values=grouped_size.values, 
-             names=grouped_size.index, 
-             color = grouped_size.index,
-             color_discrete_sequence=px.colors.sequential.Purpor_r,
-           title= 'Distribution of Company Size')
-
-st.write(fig)
-
-st.markdown('**1. More than half of the data science jobs are posted by Medium size companies (53.7%) this is probably because most of the companies are medium size.**')
-st.markdown('**2. Almost third of the data science jobs are posted by Large size companies.**')
-st.markdown("**3. Meanwhile, small size companies may not require a data scientist or any data science-related employee that's why it has the least percentage**")
-
-
-
-
-#/7
-st.subheader('7-Employment type')
-fig= px.histogram(df, x = 'employment_type',histnorm = 'percent',
-             text_auto = '.2f',template = 'plotly_dark', title = 'Precentage of Employment Types')
-
-st.write(fig)
-
-st.markdown('**1. Full-time employees are the highest among others (96.9%)**')
-st.markdown('**2. Meanwhile, the number of part-time, contract and freelance employees is very low**')
-st.markdown("**3. This can be explained that most of the data science jobs require afull-time position**")
-
-
-#/8
-st.subheader('8- Work Type')
-
-
-
-
-
-fig= px.histogram(df, x = 'work_year',color = 'remote_ratio', barmode = 'group',color_discrete_sequence=px.colors.qualitative.Pastel,
-             template = 'plotly_dark',title='Count of each Work Type')
-
-st.write(fig)
-
-
-st.markdown('**1. Remote work type is the highest during the 3 years**')
-st.markdown('**2. This may be explained by the covid pandemic because during these years the remote working become the solution and a lot of companies decided to keep working remotely even after the pandemic**')
-
-
-
-
-st.subheader('You Can Further Visualize Elements of the Dataset by Selecting an Option Below')
-
-
-
-#adding a side bar selection box for convenience
-option = st.selectbox(
-    'What Data Would You like to Visualize',
-    ('Categorical (<20 categories)', 'Categorical (>20)', 'Numerical (Discrete)', 'Numerical (Continuous)', 'Treemap')
-    ) 
-
-
-
-# sorting by categorical colums with less than 20 categories
-cat_feature1=[feature for feature in df.columns if df[feature].dtype=='O' and len(df[feature].unique())<20]
-
-#over 20 categories columns
-cat_feature2=[feature for feature in df.columns if df[feature].dtype=='O' and len(df[feature].unique())>20]
-
-#discrete & continuous values for numerical columns
-dis_feature=[feature for feature in df.columns if len(df[feature].unique())<20 and df[feature].dtype!='O']
-
-cont_feature=[feature for feature in df.columns if len(df[feature].unique())>20 and df[feature].dtype!='O']
-
-
-
-#plotting with streamlit
-if option == 'Categorical (<20 categories)':
-  for feature in cat_feature1:
-    fig = px.histogram(df, x = feature)
-    #fig.show()
-    st.plotly_chart(fig, use_container_width = True)
-elif option == 'Categorical (>20)':
-  for feature in cat_feature2:
-    fig = px.bar(df, y = feature, x = 'salary')
-    st.plotly_chart(fig, use_container_width = True)
-elif option == 'Numerical (Discrete)':
-  for feature in dis_feature:
-    fig2 = px.histogram(df, x=feature)
-    st.plotly_chart(fig2, use_container_width = True)
-elif option == 'Numerical (Continuous)':
-  for feature in cont_feature:
-    fig = px.box(df, x = feature)
-    st.plotly_chart(fig, use_container_width = True)
-  for feature in cont_feature:
-    fig1 = px.histogram(df, x= feature, color="experience_level",   marginal="box", # can be `box`, `violin`
-                         hover_data=df.columns)
-    st.plotly_chart(fig1, use_container_width = True)
-elif option == 'Treemap':
-  fig=px.treemap(df,path=[px.Constant('Job Roles'),'job_title','company_location','experience_level'],template='ggplot2',hover_name='job_title',title='<b>TreeMap of Different Roles in Data Science with Experience Level')
-  fig.update_traces(root_color='lightgrey')
-  st.plotly_chart(fig)
-  
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    prompt = f"""
+When handling a user's query, Let's think step by step: follow these steps if necessary to generate appropriate visualizations or analyses:
+
+1. Identify the key actions or tasks requested by the user, such as "visualize", "analyze", "give", "compare", "show", "find", "calculate", "sort" etc. These actions can be verbs or phrases that indicate the desired operation or analysis the user wants to perform.
+
+2. Extract the relevant data entities or columns mentioned in the query, such as column names, aggregations (e.g., "average", "sum"). These entities represent the variables or features of interest.
+
+3. Identify any filters, conditions, or constraints specified in the query, such as "top", "across different", "where", "greater than", etc. These filters help narrow down or subset the data based on certain criteria.
+
+Based on the identified actions, data entities, filters extracted from the user query:
+
+   a. Generate the necessary code to perform the required operations or calculations on the provided dataset if there is any.
+   b. Determine the appropriate visualizations or analyses using the appropriate libraries (e.g., pandas, matplotlib, seaborn) and generate the code.
+
+If the user query is long or contains multiple actions, break them into sub-query steps as explained above and combine the results or visualizations into a cohesive output, such as a single figure with multiple subplots, a report-like structure, or an interactive dashboard.
+
+Provide context and explanations for each step or sub-query, highlighting any insights, patterns, or findings observed in the data based on the visualizations or analyses.
+
+User Query: {user_input}
+
+[Generate code and visualizations based on the user's query and the dataset provided following the instructions above. Refer to the chat history for context if needed. Do not create a dataset, assume the dataset is always provided by the user. it name is "df" so use it directly]
+
+Dataset Description:
+{dataset_description}
+
+Column Names and Data Types:
+{column_info.to_markdown()}
+
+Sample Rows:
+{sample_rows}
+"""
+
+    chat_history.append({"role": "user", "content": user_input})
+
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        temperature=0,
+        seed=2024,
+        messages=[
+            {"role": "system", "content": "You are a helpful data analysis tool."},
+            *chat_history,
+            {"role": "user", "content": prompt},
+        ],
+    )
+
+    try:
+        generated_text = response.choices[0].message.content
+        chat_history.append({"role": "assistant", "content": generated_text})
+
+        # Extract the Python code from the generated text
+        generated_code = extract_python_code(generated_text)
+
+        # Send the generated code back to the model for debugging
+        debug_prompt = f"""
+Evaluate the following code for relevance to the user's query and check for errors:
+
+User Query: {user_input}
+
+Generated Code:
+{generated_code}
+
+If the code has errors, provide the corrected code along with an explanation of the errors and the corrections made.
+"""
+        debug_response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            temperature=0,
+            seed=2024,
+            messages=[
+                {"role": "system", "content": "You are a helpful data analysis tool."},
+                *chat_history,
+                {"role": "user", "content": debug_prompt},
+            ],
+        )
+        debug_output = debug_response.choices[0].message.content
+
+        if "Corrected Code:" in debug_output:
+            generated_code = debug_output.split("Corrected Code:")[-1].strip()
+
+        return generated_text, generated_code, chat_history, ""
+    except Exception as e:
+        error_message = str(e)
+        return generated_text, generated_code, chat_history, error_message
+
+def extract_python_code(text):
+    # Extract Python code between "```python" and "```"
+    pattern = r"```python(.*?)```"
+    code_snippets = re.findall(pattern, text, re.DOTALL)
+    # Join the code snippets into a single string
+    extracted_code = "\n".join(code_snippets)
+    return extracted_code.strip()
+
+
+def main():
+    st.title("Data Analysis Tool")
+    api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
+
+    # Upload CSV file
+    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+
+    if uploaded_file is not None:
+        df = pd.read_csv(uploaded_file)
+        st.write("Dataset:")
+        st.write(df.head())
+
+        # Get chat history from session state
+        session_state = st.session_state.setdefault(chat_history=[], show_chat_history=False)
+
+        # Display chat history button
+        show_history = st.button("Show Chat History")
+        if show_history:
+            session_state["show_chat_history"] = not session_state["show_chat_history"]
+            caching.clear_cache()
+
+        if session_state["show_chat_history"]:
+            st.sidebar.title("Chat History")
+            for item in session_state["chat_history"]:
+                st.sidebar.write(f"{item['role']}: {item['content']}")
+
+        # Get user queries
+        user_query = st.text_input("Enter your query:")
+
+        if user_query:
+            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, session_state["chat_history"], api_key1)
+
+            if generated_code:
+                # Update chat history in session state
+                session_state["chat_history"] = chat_history
+                st.markdown(generated_text)
+                st.code(generated_code, language="python")
+                if error_message:
+                    st.error(f"Errors occurred: {error_message}")
+                else:
+                    try:
+                        exec(generated_code)
+                        st.success("Code ran smoothly.")
+                    except Exception as e:
+                        st.error(f"Error executing the generated code: {e}")
+                        st.code(traceback.format_exc())
+
+if __name__ == "__main__":
+    main()

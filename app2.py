@@ -14,8 +14,8 @@ import pandas as pd
 import re
 
 def generate_code(user_input, df, chat_history, api_key1):
-    #client= OpenAI(api_key=api_key1)
-    openai.api_key = api_key1
+    client= OpenAI(api_key=api_key1)
+    #openai.api_key = api_key1
 
     """
     Generate Python code to visualize or analyze the provided dataset based on the user's query.

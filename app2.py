@@ -165,12 +165,18 @@ def main():
         df = pd.read_csv(uploaded_file)
         st.write("Dataset:")
         st.write(df.head())
+        chat_history = []
+
+        # Display chat history
+        st.sidebar.title("Chat History")
+        for item in chat_history:
+            st.sidebar.write(f"{item['role']}: {item['content']}")
+
 
         # Get user query
         user_query = st.text_input("Enter your query:")
 
         if user_query:
-            chat_history = []
             generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
 
             if generated_code:

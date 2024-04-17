@@ -169,6 +169,8 @@ def main():
             if generated_code:
                 st.markdown(generated_text)
                 st.code(generated_code, language="python")
+                plot_area.pyplot(exec(generated_code))           
+
 
                 if error_message:
                     st.error(f"Errors occurred: {error_message}")

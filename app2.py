@@ -192,5 +192,8 @@ def main():
                         st.error(f"Error executing the generated code: {e}")
                         st.code(traceback.format_exc())
 
+        st.text_input("Ask another question:")
+
+
 if __name__ == "__main__":
     main()

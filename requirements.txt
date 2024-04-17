@@ -7,4 +7,3 @@ country_converter
 tabulate
 matplotlib
 seaborn
-pyplot

@@ -4,6 +4,7 @@ from openai import OpenAI
 import openai
 import re
 import traceback
+import sys
 
 def generate_code(user_input, df, api_key1):
     client = OpenAI(api_key=api_key1)
@@ -79,6 +80,7 @@ def extract_python_code(text):
     extracted_code = "\n".join(code_snippets)
     return extracted_code.strip()
 
+
 def main():
     st.title("Data Analysis Tool")
     api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
@@ -90,45 +92,48 @@ def main():
         df = pd.read_csv(uploaded_file)
         st.write("Dataset:")
         st.write(df.head())
+        chat_history = []
 
-        questions = []
-        responses = []
-        errors = []
+        # Create a placeholder for the query input and response area
+        query_input_placeholder = st.empty()
+        response_area_placeholder = st.empty()
 
-        while True:
-            user_query = st.text_input("Enter your query:")
-            if user_query:
-                generated_text, generated_code, error_message = generate_code(user_query, df, api_key1)
+        # Function to handle user queries
+        def handle_user_query(query):
+            generated_text, generated_code, chat_history, error_message = generate_code(query, df, chat_history, api_key1)
 
-                if generated_code:
-                    questions.append(user_query)
-                    responses.append(generated_text)
-                    errors.append(error_message)
-
+            if generated_code:
+                with response_area_placeholder:
                     st.markdown(generated_text)
-                    st.code(generated_code, language="python")
-                    if error_message:
-                        st.error(f"Errors occurred: {error_message}")
-                    else:
-                        try:
-                            exec(generated_code)
-                            st.success("Code ran smoothly.")
-                        except Exception as e:
-                            st.error(f"Error executing the generated code: {e}")
-                            st.code(traceback.format_exc())
+                    plot_area = st.empty()
 
-            if st.button("Ask Another Question"):
-                continue
+                    try:
+                        exec(generated_code)
+                        st.success("Code ran smoothly.")
+                    except Exception as e:
+                        st.error(f"Error executing the generated code: {e}")
+                        st.code(traceback.format_exc())
+
+            if error_message:
+                with response_area_placeholder:
+                    st.error(f"Errors occurred: {error_message}")
+
+        # Initial query
+        with query_input_placeholder:
+            initial_query = st.text_input("Enter your query:")
+
+        if initial_query:
+            handle_user_query(initial_query)
+
+        # Additional queries
+        while True:
+            with query_input_placeholder:
+                additional_query = st.text_input("Ask another question (or leave blank to exit):")
+
+            if additional_query:
+                handle_user_query(additional_query)
             else:
                 break
-
-        if questions:
-            st.markdown("## Chat History")
-            for i in range(len(questions)):
-                st.subheader(f"Question: {questions[i]}")
-                st.markdown(f"Response: {responses[i]}")
-                if errors[i]:
-                    st.error(f"Errors occurred: {errors[i]}")
 
 if __name__ == "__main__":
     main()

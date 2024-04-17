@@ -167,6 +167,7 @@ def main():
             generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
 
             if generated_code:
+                st.markdown(generated_text)
                 st.code(generated_code, language="python")
 
                 if error_message:

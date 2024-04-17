@@ -22,7 +22,9 @@ def generate_code(user_input, df, chat_history, api_key1):
 
     Args:
         user_input (str): The user's query for visualizing or analyzing the data.
+        
         df (pandas.DataFrame): The dataset to be used for generating the code.
+        
         chat_history (list): A list of dictionaries containing the chat history between the user and the model.
 
     Returns:
@@ -168,7 +170,7 @@ def main():
 
             if generated_code:
                 st.markdown(generated_text)
-                st.code(generated_code, language="python")
+                #st.code(generated_code, language="python")
                 plot_area = st.empty()
 
                 plot_area.pyplot(exec(generated_code))           

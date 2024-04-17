@@ -3,6 +3,7 @@ import pandas as pd
 from openai import OpenAI
 import openai
 import re
+import pyplot
 import traceback
 import sys
 
@@ -169,6 +170,8 @@ def main():
             if generated_code:
                 st.markdown(generated_text)
                 st.code(generated_code, language="python")
+                plot_area = st.empty()
+
                 plot_area.pyplot(exec(generated_code))           
 
 

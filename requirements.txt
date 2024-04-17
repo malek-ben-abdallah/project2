@@ -1,0 +1,5 @@
+pandas
+plotly
+pycountry
+country_converter
+ 

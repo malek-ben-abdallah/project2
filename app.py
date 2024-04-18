@@ -156,7 +156,6 @@ def extract_python_code(text):
 
 
 import uuid  # Import the uuid module to generate unique identifiers
-
 def main():
     st.title("Data Analysis Tool")
     api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
@@ -169,14 +168,11 @@ def main():
         st.write("Dataset:")
         st.write(df.head())
         chat_history = []
-
         query_count = 0  # Initialize query count
 
         while True:
             query_count += 1  # Increment query count
-            # Generate a unique key using uuid
-            query_key = uuid.uuid4().hex
-            # Get user query
+            query_key = f"query_{query_count}"  # Generate unique key for the query input
             user_query = st.text_input(f"Enter your query {query_count}:", key=query_key)
 
             if user_query:
@@ -201,4 +197,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

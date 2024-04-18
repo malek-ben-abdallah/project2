@@ -168,12 +168,9 @@ def main():
         st.write(df.head())
         chat_history = []
 
-        query_count = 0  # Initialize query count
-
         while True:
-            query_count += 1  # Increment query count
             # Get user query
-            user_query = st.text_input(f"Enter your query {query_count}:", key=f"query_{query_count}")
+            user_query = st.text_input("Enter your query:")
 
             if user_query:
                 generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
@@ -191,7 +188,11 @@ def main():
                         st.error(f"Error executing the generated code: {e}")
                         st.code(traceback.format_exc())
 
+            add_another_query = st.checkbox("Add another query")
+            if not add_another_query:
+                break
 
 
 if __name__ == "__main__":
     main()
+

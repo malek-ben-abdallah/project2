@@ -158,6 +158,8 @@ def extract_python_code(text):
 import uuid  # Import the uuid module to generate unique identifiers
 def main():
     st.title("Data Analysis Tool")
+    api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
+
 
     # Upload CSV file
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
@@ -172,7 +174,7 @@ def main():
             user_query = st.text_input(f"Enter your query {query_count}:")
 
             if user_query:
-                generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history)
+                generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history,  api_key1 )
 
                 if generated_code:
                     st.markdown(generated_text)

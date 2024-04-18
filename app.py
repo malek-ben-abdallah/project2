@@ -167,33 +167,32 @@ def main():
         st.write("Dataset:")
         st.write(df.head())
         chat_history = []
-        
-        # Get user query
-        user_query = st.text_input("Enter your query:")
 
-        if user_query:
-            generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
+        while True:
+            # Get user query
+            user_query = st.text_input("Enter your query:")
 
-            if generated_code:
-                st.markdown(generated_text)
-                #st.code(generated_code, language="python")
-                plot_area = st.empty()
+            if user_query:
+                generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
 
-                plot_area.pyplot(exec(generated_code))           
+                if generated_code:
+                    st.markdown(generated_text)
+                    # st.code(generated_code, language="python")
+                    plot_area = st.empty()
 
+                    plot_area.pyplot(exec(generated_code))
 
-                if error_message:
-                    st.error(f"Errors occurred: {error_message}")
-                else:
-                    try:
-                        exec(generated_code)
-                        st.success("Code ran smoothly.")
-                    except Exception as e:
-                        st.error(f"Error executing the generated code: {e}")
-                        st.code(traceback.format_exc())
+                    if error_message:
+                        st.error(f"Errors occurred: {error_message}")
+                    else:
+                        try:
+                            exec(generated_code)
+                            st.success("Code ran smoothly.")
+                        except Exception as e:
+                            st.error(f"Error executing the generated code: {e}")
+                            st.code(traceback.format_exc())
 
-        st.text_input("Ask another question:")
+            another_question = st.text_input("Ask another question (or leave blank to exit):")
+            if not another_question:
+                break
 
-
-if __name__ == "__main__":
-    main()

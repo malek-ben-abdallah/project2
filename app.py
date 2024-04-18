@@ -203,7 +203,7 @@ def main():
                 elif message["role"] == "assistant":
                     generated_text= message['content']
                     #st.write(f"Assistant: {message['content']}")
-                    st.write("Answer : ")
+                    st.write("**Answer:** ")
                     plot_area = st.empty()
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
                     

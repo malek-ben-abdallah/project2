@@ -191,9 +191,7 @@ def main():
                         st.error(f"Error executing the generated code: {e}")
                         st.code(traceback.format_exc())
 
-            another_question = st.text_input("Ask another question (or leave blank to exit):")
-            if not another_question:
-                break
+
 
 if __name__ == "__main__":
     main()

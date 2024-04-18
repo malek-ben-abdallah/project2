@@ -196,14 +196,16 @@ def main():
 
         for message in st.session_state.messages:
 
+
             with st.container():
                 if message["role"] == "user":
                     st.write(f"You: {message['content']}")
                 elif message["role"] == "assistant":
-                    st.write(f"Assistant:" )
+                    st.write(f"Assistant: {message['content']}")
                     plot_area = st.empty()
-
-                    plot_area.pyplot(exec({message['content']})) 
+                    plot_area.pyplot(exec(generated_code))
+                    
+                  
     
 if __name__ == "__main__":
     main()

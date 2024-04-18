@@ -6,80 +6,12 @@ import re
 import traceback
 import sys
 
-def generate_code(user_input, df, api_key1):
+def generate_code(user_input, df, chat_history, api_key1):
     client = OpenAI(api_key=api_key1)
-    
-    # Generate a description of the dataset
-    dataset_description = f"This dataset contains {len(df.columns)} columns: {', '.join(df.columns)}."
-
-    # The column names and data types
-    column_info = pd.DataFrame({'column': df.columns, 'data_type': df.dtypes})
-
-    # Get a few sample rows from the dataset
-    sample_rows = df.head(5).to_dict(orient='records')
-
-    prompt = f"""
-When handling a user's query, Let's think step by step: follow these steps if necessary to generate appropriate visualizations or analyses:
-
-1. Identify the key actions or tasks requested by the user, such as "visualize", "analyze", "give", "compare", "show", "find", "calculate", "sort" etc. These actions can be verbs or phrases that indicate the desired operation or analysis the user wants to perform.
-
-2. Extract the relevant data entities or columns mentioned in the query, such as column names, aggregations (e.g., "average", "sum"). These entities represent the variables or features of interest.
-
-3. Identify any filters, conditions, or constraints specified in the query, such as "top", "across different", "where", "greater than", etc. These filters help narrow down or subset the data based on certain criteria.
-
-Based on the identified actions, data entities, filters extracted from the user query:
-
-   a. Generate the necessary code to perform the required operations or calculations on the provided dataset if there is any.
-   b. Determine the appropriate visualizations or analyses using the appropriate libraries (e.g., pandas, matplotlib, seaborn) and generate the code.
-
-If the user query is long or contains multiple actions, break them into sub-query steps as explained above and combine the results or visualizations into a cohesive output, such as a single figure with multiple subplots, a report-like structure, or an interactive dashboard.
-
-Provide context and explanations for each step or sub-query, highlighting any insights, patterns, or findings observed in the data based on the visualizations or analyses.
-
-User Query: {user_input}
-
-[Generate code and visualizations based on the user's query and the dataset provided following the instructions above. Refer to the chat history for context if needed. Do not create a dataset, assume the dataset is always provided by the user. it name is "df" so use it directly]
-
-Dataset Description:
-{dataset_description}
-
-Column Names and Data Types:
-{column_info.to_markdown()}
-
-Sample Rows:
-{sample_rows}
-"""
-
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        temperature=0,
-        seed=2024,
-        messages=[
-            {"role": "system", "content": "You are a helpful data analysis tool."},
-            {"role": "user", "content": user_input},
-            {"role": "user", "content": prompt},
-        ],
-    )
-
-    try:
-        generated_text = response.choices[0].message.content
-
-        # Extract the Python code from the generated text
-        generated_code = extract_python_code(generated_text)
-
-        return generated_text, generated_code, ""
-    except Exception as e:
-        error_message = str(e)
-        return generated_text, "", error_message
+    # ... (Existing generate_code function)
 
 def extract_python_code(text):
-    # Extract Python code between "```python" and "```"
-    pattern = r"```python(.*?)```"
-    code_snippets = re.findall(pattern, text, re.DOTALL)
-    # Join the code snippets into a single string
-    extracted_code = "\n".join(code_snippets)
-    return extracted_code.strip()
-
+    # ... (Existing extract_python_code function)
 
 def main():
     st.title("Data Analysis Tool")
@@ -92,14 +24,14 @@ def main():
         df = pd.read_csv(uploaded_file)
         st.write("Dataset:")
         st.write(df.head())
-        chat_history = []
+        chat_history = []  # Initialize chat_history here
 
         # Create a placeholder for the query input and response area
         query_input_placeholder = st.empty()
         response_area_placeholder = st.empty()
 
         # Function to handle user queries
-        def handle_user_query(query):
+        def handle_user_query(query, chat_history):
             generated_text, generated_code, chat_history, error_message = generate_code(query, df, chat_history, api_key1)
 
             if generated_code:
@@ -118,12 +50,14 @@ def main():
                 with response_area_placeholder:
                     st.error(f"Errors occurred: {error_message}")
 
+            return chat_history  # Return the updated chat_history
+
         # Initial query
         with query_input_placeholder:
             initial_query = st.text_input("Enter your query:")
 
         if initial_query:
-            handle_user_query(initial_query)
+            chat_history = handle_user_query(initial_query, chat_history)
 
         # Additional queries
         while True:
@@ -131,7 +65,7 @@ def main():
                 additional_query = st.text_input("Ask another question (or leave blank to exit):")
 
             if additional_query:
-                handle_user_query(additional_query)
+                chat_history = handle_user_query(additional_query, chat_history)
             else:
                 break
 

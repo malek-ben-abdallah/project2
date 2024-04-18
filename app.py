@@ -204,7 +204,7 @@ def main():
                     coode= message['content']
                     #st.write(f"Assistant: {message['content']}")
                     plot_area = st.empty()
-                    plot_area.pyplot(exec(coode))
+                    plot_area.pyplot(exec(extract_python_code(coode)))
                     
                   
     

@@ -182,6 +182,7 @@ def main():
                     st.markdown(generated_text)
                     # st.code(generated_code, language="python")
                     plot_area = st.empty()
+                    plot_area.pyplot(exec(generated_code))   
 
                     try:
                         exec(generated_code)

@@ -158,8 +158,6 @@ def extract_python_code(text):
 import uuid  # Import the uuid module to generate unique identifiers
 def main():
     st.title("Data Analysis Tool")
-    api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
-
 
     # Upload CSV file
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
@@ -170,21 +168,17 @@ def main():
         st.write(df.head())
         chat_history = []
 
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-
         user_input = st.text_input("What's your query?")
 
         if st.button("Submit"):
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history, api_key1)
+            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history)
 
             if generated_code:
-                st.session_state.messages.append({"role": "assistant", "content": generated_text})
-                st.markdown(generated_text)
-                # st.code(generated_code, language="python")
-                plot_area = st.empty()
-                plot_area.pyplot(exec(generated_code))   
+                st.subheader("Assistant's Response")
+                st.write(f"You: {user_input}")
+                for message in chat_history:
+                    if message["role"] == "assistant":
+                        st.write(f"Assistant: {message['content']}")
 
                 try:
                     exec(generated_code)
@@ -192,23 +186,6 @@ def main():
                 except Exception as e:
                     st.error(f"Error executing the generated code: {e}")
                     st.code(traceback.format_exc())
-        st.subheader('Queries')
 
-        for message in st.session_state.messages:
-
-
-            with st.container():
-                if message["role"] == "user":
-                    st.write(f"**Your Query:** {message['content']}")
-                elif message["role"] == "assistant":
-                    generated_text= message['content']
-                    #st.write(f"Assistant: {message['content']}")
-                    st.write("**Answer:** ")
-                    plot_area = st.empty()
-                    plot_area.pyplot(exec(extract_python_code(generated_text)))
-        if st.button("Show Chat History"):
-            st.subheader("Chat History")
-            st.write(chat_history)           
-    
 if __name__ == "__main__":
     main()

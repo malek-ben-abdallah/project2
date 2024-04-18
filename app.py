@@ -18,27 +18,27 @@ def generate_code(user_input, df, chat_history, api_key1):
     client= OpenAI(api_key=api_key1)
     #openai.api_key = api_key1
 
-    """
-    Generate Python code to visualize or analyze the provided dataset based on the user's query.
+    
+    #Generate Python code to visualize or analyze the provided dataset based on the user's query.
 
-    Args:
+    #Args:
     
-        user_input (str): The user's query for visualizing or analyzing the data.
+        #user_input (str): The user's query for visualizing or analyzing the data.
         
-        df (pandas.DataFrame): The dataset to be used for generating the code.
+        #df (pandas.DataFrame): The dataset to be used for generating the code.
         
-        chat_history (list): A list of dictionaries containing the chat history between the user and the model.
+        #chat_history (list): A list of dictionaries containing the chat history between the user and the model.
 
-    Returns:
+    #Returns:
     
-        str: The generated text based on the user's query and the provided dataset.
+        #str: The generated text based on the user's query and the provided dataset.
     
-        str: The generated Python code based on the user's query and the provided dataset.
+        #str: The generated Python code based on the user's query and the provided dataset.
         
-        list: The updated chat history.
+        #list: The updated chat history.
         
-        str: Any error message encountered during code execution.
-    """
+        #str: Any error message encountered during code execution.
+    
     # Generate a description of the dataset
     dataset_description = f"This dataset contains {len(df.columns)} columns: {', '.join(df.columns)}."
 

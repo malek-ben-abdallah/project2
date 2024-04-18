@@ -173,17 +173,11 @@ def main():
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
-        for message in st.session_state.messages:
-            with st.container():
-                if message["role"] == "user":
-                    st.write(f"You: {message['content']}")
-                elif message["role"] == "assistant":
-                    st.write(f"Assistant: {message['content']}")
-
         user_input = st.text_input("What's your query?")
+
         if st.button("Submit"):
             st.session_state.messages.append({"role": "user", "content": user_input})
-            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history,     api_key1)
+            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history)
 
             if generated_code:
                 st.session_state.messages.append({"role": "assistant", "content": generated_text})
@@ -198,6 +192,13 @@ def main():
                 except Exception as e:
                     st.error(f"Error executing the generated code: {e}")
                     st.code(traceback.format_exc())
+    
+        for message in st.session_state.messages:
+            with st.container():
+                if message["role"] == "user":
+                    st.write(f"You: {message['content']}")
+                elif message["role"] == "assistant":
+                    st.write(f"Assistant: {message['content']}")
     
 if __name__ == "__main__":
     main()

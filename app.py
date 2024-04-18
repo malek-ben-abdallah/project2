@@ -203,7 +203,7 @@ def main():
                     st.write(f"Assistant:" )
                     plot_area = st.empty()
 
-                    plot_area.pyplot(exec(message['content'])) 
+                    plot_area.pyplot(exec({message['content']})) 
     
 if __name__ == "__main__":
     main()

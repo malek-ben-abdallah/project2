@@ -171,7 +171,7 @@ def main():
         user_input = st.text_input("What's your query?")
 
         if st.button("Submit"):
-            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history)
+            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history, api_key1)
 
             if generated_code:
                 st.subheader("Assistant's Response")

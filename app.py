@@ -177,18 +177,19 @@ def main():
 
                 if generated_code:
                     st.markdown(generated_text)
+                    # st.code(generated_code, language="python")
+                    plot_area = st.empty()
 
-                    if error_message:
-                        st.error(f"Errors occurred: {error_message}")
-                    else:
-                        try:
-                            exec(generated_code)
-                            st.success("Code ran smoothly.")
-                        except Exception as e:
-                            st.error(f"Error executing the generated code: {e}")
-                            st.code(traceback.format_exc())
+                    try:
+                        exec(generated_code)
+                        st.success("Code ran smoothly.")
+                    except Exception as e:
+                        st.error(f"Error executing the generated code: {e}")
+                        st.code(traceback.format_exc())
 
             another_question = st.text_input("Ask another question (or leave blank to exit):")
             if not another_question:
                 break
 
+if __name__ == "__main__":
+    main()

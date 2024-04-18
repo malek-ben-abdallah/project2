@@ -200,9 +200,9 @@ def main():
                 if message["role"] == "user":
                     st.write(f"You: {message['content']}")
                 elif message["role"] == "assistant":
-                    st.write(f"Assistant:   
-                {plot_area = st.empty()
-                plot_area.pyplot(exec(generated_code)) }")
+                    st.write("Assistant: "  
+                             {plot_area = st.empty()
+                plot_area.pyplot(exec(generated_code)) })
     
 if __name__ == "__main__":
     main()

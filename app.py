@@ -158,7 +158,6 @@ def extract_python_code(text):
 import uuid  # Import the uuid module to generate unique identifiers
 def main():
     st.title("Data Analysis Tool")
-    api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
 
     # Upload CSV file
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
@@ -168,15 +167,12 @@ def main():
         st.write("Dataset:")
         st.write(df.head())
         chat_history = []
-        query_count = 0  # Initialize query count
 
-        while True:
-            query_count += 1  # Increment query count
-            query_key = f"query_{query_count}"  # Generate unique key for the query input
-            user_query = st.text_input(f"Enter your query {query_count}:", key=query_key)
+        for query_count in range(1, 100):  # Assume a maximum of 100 queries for now
+            user_query = st.text_input(f"Enter your query {query_count}:")
 
             if user_query:
-                generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history, api_key1)
+                generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history)
 
                 if generated_code:
                     st.markdown(generated_text)
@@ -197,4 +193,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

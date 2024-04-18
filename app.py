@@ -202,7 +202,7 @@ def main():
                 elif message["role"] == "assistant":
                     st.write("Assistant: "  )
                     plot_area = st.empty()
-                    plot_area.pyplot(exec(generated_code)) )
+                    plot_area.pyplot(exec(generated_code)) 
     
 if __name__ == "__main__":
     main()

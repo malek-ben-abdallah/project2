@@ -180,6 +180,7 @@ def main():
                     # st.code(generated_code, language="python")
                     plot_area = st.empty()
 
+                    plot_area.pyplot(exec(generated_code))   
                     try:
                         exec(generated_code)
                         st.success("Code ran smoothly.")

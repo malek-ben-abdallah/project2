@@ -199,12 +199,13 @@ def main():
 
             with st.container():
                 if message["role"] == "user":
-                    st.write(f"You: {message['content']}")
+                    st.write(f"Your Query: {message['content']}")
                 elif message["role"] == "assistant":
-                    coode= message['content']
+                    generated_text= message['content']
                     #st.write(f"Assistant: {message['content']}")
+                    #st.write("Answer : ")
                     plot_area = st.empty()
-                    plot_area.pyplot(exec(extract_python_code(coode)))
+                    plot_area.pyplot(exec(extract_python_code(generated_text)))
                     
                   
     

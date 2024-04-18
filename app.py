@@ -201,6 +201,8 @@ def main():
                     st.write(f"You: {message['content']}")
                 elif message["role"] == "assistant":
                     st.write(f"Assistant:" )
+                    plot_area = st.empty()
+
                     plot_area.pyplot(exec(message['content'])) 
     
 if __name__ == "__main__":

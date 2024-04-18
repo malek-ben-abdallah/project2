@@ -206,13 +206,9 @@ def main():
                     st.write("**Answer:** ")
                     plot_area = st.empty()
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
-        st.subheader("Generated Chat History")
-        for message in chat_history:
-            if message["role"] == "user":
-                st.write(f"You: {message['content']}")
-            elif message["role"] == "assistant":
-                st.write(f"Assistant: {message['content']}")              
-                  
+        if st.button("Show Chat History"):
+            st.subheader("Chat History")
+            st.write(chat_history)           
     
 if __name__ == "__main__":
     main()

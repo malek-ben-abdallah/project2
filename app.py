@@ -191,11 +191,10 @@ def main():
                         st.error(f"Error executing the generated code: {e}")
                         st.code(traceback.format_exc())
 
-            add_another_query = st.checkbox("Add another query")
+            add_another_query = st.button("Add another query")
             if not add_another_query:
                 break
 
 if __name__ == "__main__":
     main()
-
 

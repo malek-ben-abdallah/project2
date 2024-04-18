@@ -170,28 +170,34 @@ def main():
         st.write(df.head())
         chat_history = []
 
-        for query_count in range(1, 100):  # Assume a maximum of 100 queries for now
-            user_query = st.text_input(f"Enter your query {query_count}:")
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
 
-            if user_query:
-                generated_text, generated_code, chat_history, error_message = generate_code(user_query, df, chat_history,  api_key1 )
+        for message in st.session_state.messages:
+            with st.container():
+                if message["role"] == "user":
+                    st.write(f"You: {message['content']}")
+                elif message["role"] == "assistant":
+                    st.write(f"Assistant: {message['content']}")
 
-                if generated_code:
-                    st.markdown(generated_text)
-                    # st.code(generated_code, language="python")
-                    plot_area = st.empty()
-                    plot_area.pyplot(exec(generated_code))   
+        user_input = st.text_input("What's your query?")
+        if st.button("Submit"):
+            st.session_state.messages.append({"role": "user", "content": user_input})
+            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history)
 
-                    try:
-                        exec(generated_code)
-                        st.success("Code ran smoothly.")
-                    except Exception as e:
-                        st.error(f"Error executing the generated code: {e}")
-                        st.code(traceback.format_exc())
+            if generated_code:
+                st.session_state.messages.append({"role": "assistant", "content": generated_text})
+                st.markdown(generated_text)
+                # st.code(generated_code, language="python")
+                plot_area = st.empty()
+                plot_area.pyplot(exec(generated_code))   
 
-            add_another_query = st.checkbox("Add another query")
-            if not add_another_query:
-                break
-
+                try:
+                    exec(generated_code)
+                    st.success("Code ran smoothly.")
+                except Exception as e:
+                    st.error(f"Error executing the generated code: {e}")
+                    st.code(traceback.format_exc())
+    
 if __name__ == "__main__":
     main()

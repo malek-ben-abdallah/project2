@@ -201,9 +201,10 @@ def main():
                 if message["role"] == "user":
                     st.write(f"You: {message['content']}")
                 elif message["role"] == "assistant":
-                    st.write(f"Assistant: {message['content']}")
+                    coode= message['content']
+                    #st.write(f"Assistant: {message['content']}")
                     plot_area = st.empty()
-                    plot_area.pyplot(exec(generated_code))
+                    plot_area.pyplot(exec(coode))
                     
                   
     

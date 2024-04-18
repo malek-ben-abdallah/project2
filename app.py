@@ -177,7 +177,7 @@ def main():
 
         if st.button("Submit"):
             st.session_state.messages.append({"role": "user", "content": user_input})
-            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history)
+            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history, api_key1)
 
             if generated_code:
                 st.session_state.messages.append({"role": "assistant", "content": generated_text})

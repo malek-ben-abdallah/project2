@@ -192,17 +192,16 @@ def main():
                 except Exception as e:
                     st.error(f"Error executing the generated code: {e}")
                     st.code(traceback.format_exc())
-    
+        st.subheader('Queries')
+
         for message in st.session_state.messages:
-            st.subheader('Queries')
 
             with st.container():
                 if message["role"] == "user":
                     st.write(f"You: {message['content']}")
                 elif message["role"] == "assistant":
-                    st.write("Assistant: "  )
-                    plot_area = st.empty()
-                    plot_area.pyplot(exec(generated_code)) 
+                    st.write(f"Assistant:" )
+                    plot_area.pyplot(exec(message['content'])) 
     
 if __name__ == "__main__":
     main()

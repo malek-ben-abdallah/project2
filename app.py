@@ -175,15 +175,16 @@ def main():
         st.write(df.head())
         chat_history = []
 
+        ## Create a session for the user to ask multiple questions 
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+
 ## Create a session for the user to ask multiple questions 
 
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
         
-        ## Create a session for the user to ask multiple questions 
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
 
         
         user_input = st.text_input("What's your query?")

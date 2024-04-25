@@ -189,12 +189,15 @@ def main():
         
         user_input = st.text_input("What's your query?")
 
+
+                user_input = st.text_input("What's your query?")
+
         if st.button("Submit"):
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history, api_key1)
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, st.session_state.chat_history, api_key1)
 
             if generated_code:
-                st.session_state.messages.append({"role": "assistant", "content": generated_text})
+                st.session_state.chat_history.append({"role": "assistant", "content": generated_text})
 
                 # Print the code in the response output ## we can delete them later if we want 
                 st.markdown(generated_text)
@@ -211,6 +214,12 @@ def main():
                     st.error(f"Error executing the generated code: {e}")
                     st.code(traceback.format_exc())
 
+
+
+        
+
+
+
 ### in this part, we can see the chat history between the user and the model 
         st.subheader('Queries')
 
@@ -226,6 +235,8 @@ def main():
                     st.write("**Answer:** ")
                     plot_area = st.empty()
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
+
+        
         if st.button("Show Chat History"):
             st.subheader("Chat History")
             st.write(chat_history)           

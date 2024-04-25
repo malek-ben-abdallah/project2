@@ -157,9 +157,12 @@ def extract_python_code(text):
 
 import uuid  # Import the uuid module to generate unique identifiers
 def main():
-    st.title("Data Analysis Tool")
-    api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
 
+    # the Title of Our Application 
+    st.title("Data Analysis Tool")
+
+    # Get the User OpenAI key
+    api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
 
     # Upload CSV file
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
@@ -170,33 +173,34 @@ def main():
         st.write(df.head())
         chat_history = []
 
-
-        # Create a session for the user to ask multiple questions 
+        ## Create a session for the user to ask multiple questions 
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = []
-
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
 
         user_input = st.text_input("What's your query?")
 
         if st.button("Submit"):
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history, api_key1)
+            st.session_state.chat_history.append({"role": "user", "content": user_input})
+            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, st.session_state.chat_history, api_key1)
 
             if generated_code:
-                st.session_state.messages.append({"role": "assistant", "content": generated_text})
+                st.session_state.chat_history.append({"role": "assistant", "content": generated_text})
+
+                # Print the code in the response output ## we can delete them later if we want 
                 st.markdown(generated_text)
                 # st.code(generated_code, language="python")
+
+                # Plot the visualization directly 
                 plot_area = st.empty()
                 plot_area.pyplot(exec(generated_code))   
 
                 try:
                     exec(generated_code)
-                    st.success("Code ran smoothly.")
+                    st.success("Code ran smoothly.")  # if the code run smoothly 
                 except Exception as e:
                     st.error(f"Error executing the generated code: {e}")
                     st.code(traceback.format_exc())
+
         st.subheader('Queries')
 
         for message in st.session_state.messages:

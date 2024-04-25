@@ -208,7 +208,9 @@ def main():
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
         if st.button("Show Chat History"):
             st.subheader("Chat History")
-            st.write(chat_history)           
+            st.write(st.session_state.chat_history)
+
+            #st.write(chat_history)           
     
 if __name__ == "__main__":
     main()

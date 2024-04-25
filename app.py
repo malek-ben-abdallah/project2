@@ -190,7 +190,6 @@ def main():
         user_input = st.text_input("What's your query?")
 
 
-                user_input = st.text_input("What's your query?")
 
         if st.button("Submit"):
             st.session_state.chat_history.append({"role": "user", "content": user_input})

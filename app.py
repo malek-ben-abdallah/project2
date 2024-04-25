@@ -1,21 +1,20 @@
+
 import streamlit as st
 import pandas as pd
-from openai import OpenAI
 import openai
+from openai import OpenAI
 import re
 import traceback
 import sys
 
 
-# Set up OpenAI API key (replace with your actual key)
+# Set up the OpenAI API key ( each user will have to replace it with their actual key in order to use the application)
 # Initialize the client
-
-import openai
-import pandas as pd
-import re
 
 def generate_code(user_input, df, chat_history, api_key1):
     client= OpenAI(api_key=api_key1)
+    
+    
     #openai.api_key = api_key1
 
     
@@ -155,6 +154,9 @@ def extract_python_code(text):
     return extracted_code.strip()
 
 
+
+########### Main Function ##############
+
 import uuid  # Import the uuid module to generate unique identifiers
 def main():
 
@@ -173,18 +175,19 @@ def main():
         st.write(df.head())
         chat_history = []
 
-        ## Create a session for the user to ask multiple questions 
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
+## Create a session for the user to ask multiple questions 
+
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
 
         user_input = st.text_input("What's your query?")
 
         if st.button("Submit"):
-            st.session_state.chat_history.append({"role": "user", "content": user_input})
-            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, st.session_state.chat_history, api_key1)
+            st.session_state.messages.append({"role": "user", "content": user_input})
+            generated_text, generated_code, chat_history, error_message = generate_code(user_input, df, chat_history, api_key1)
 
             if generated_code:
-                st.session_state.chat_history.append({"role": "assistant", "content": generated_text})
+                st.session_state.messages.append({"role": "assistant", "content": generated_text})
 
                 # Print the code in the response output ## we can delete them later if we want 
                 st.markdown(generated_text)
@@ -201,6 +204,7 @@ def main():
                     st.error(f"Error executing the generated code: {e}")
                     st.code(traceback.format_exc())
 
+### in this part, we can see the chat history between the user and the model 
         st.subheader('Queries')
 
         for message in st.session_state.messages:
@@ -215,10 +219,9 @@ def main():
                     st.write("**Answer:** ")
                     plot_area = st.empty()
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
-          
-        ### Display Chat History
         if st.button("Show Chat History"):
             st.subheader("Chat History")
-            st.write(st.session_state.chat_history)    
+            st.write(chat_history)           
+    
 if __name__ == "__main__":
     main()

@@ -219,6 +219,8 @@ def main():
 
         for message in st.session_state.messages:
 
+            if "messages" not in st.session_state:
+                st.session_state.messages = []
 
             with st.container():
                 if message["role"] == "user":
@@ -231,10 +233,10 @@ def main():
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
 
         
-        ### Display Chat History
-        if st.button("Show Chat History"):
-            st.subheader("Chat History")
-            st.write(st.session_state.chat_history)  
+    ### Display Chat History
+    if st.button("Show Chat History"):
+        st.subheader("Chat History")
+        st.write(st.session_state.chat_history)  
     
 if __name__ == "__main__":
     main()

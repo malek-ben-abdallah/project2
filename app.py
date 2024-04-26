@@ -175,14 +175,12 @@ def main():
         st.write(df.head())
         chat_history = []
 
+
         ## Create a session for the user to ask multiple questions 
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = []
 
-        ## Create a session for the user to ask multiple questions 
 
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
 
         
 
@@ -213,7 +211,9 @@ def main():
                     st.error(f"Error executing the generated code: {e}")
                     st.code(traceback.format_exc())
 
+        ## Create a session for the user to ask multiple questions 
 
+  
         ### in this part, we can see the chat history between the user and the model 
         st.subheader('Queries')
 

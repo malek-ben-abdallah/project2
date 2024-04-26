@@ -179,7 +179,7 @@ def main():
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = []
 
-## Create a session for the user to ask multiple questions 
+        ## Create a session for the user to ask multiple questions 
 
         if "messages" not in st.session_state:
             st.session_state.messages = []
@@ -214,12 +214,7 @@ def main():
                     st.code(traceback.format_exc())
 
 
-
-        
-
-
-
-### in this part, we can see the chat history between the user and the model 
+        ### in this part, we can see the chat history between the user and the model 
         st.subheader('Queries')
 
         for message in st.session_state.messages:
@@ -236,9 +231,10 @@ def main():
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
 
         
+        ### Display Chat History
         if st.button("Show Chat History"):
             st.subheader("Chat History")
-            st.write(chat_history)           
+            st.write(st.session_state.chat_history)  
     
 if __name__ == "__main__":
     main()

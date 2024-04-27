@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import openai
@@ -219,11 +218,10 @@ def main():
         ### in this part, we can see the chat history between the user and the model 
         st.subheader('Queries')
 
+        for message in st.session_state.messages:
 
 
 
-
-       for message in st.session_state.messages:
             with st.container():
                 if message["role"] == "user":
                     st.write(f"**Your Query:** {message['content']}")
@@ -233,14 +231,12 @@ def main():
                     st.write("**Answer:** ")
                     plot_area = st.empty()
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
-    
 
         
     ### Display Chat History
     if st.button("Show Chat History"):
         st.subheader("Chat History")
         st.write(st.session_state.chat_history)  
-
-
+    
 if __name__ == "__main__":
     main()

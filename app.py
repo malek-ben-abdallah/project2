@@ -1,8 +1,5 @@
 #### working code ###
 
-
-
-
 import streamlit as st
 import pandas as pd
 import openai
@@ -11,17 +8,14 @@ import re
 import traceback
 import sys
 
-
 # Set up the OpenAI API key ( each user will have to replace it with their actual key in order to use the application)
 # Initialize the client
 
 def generate_code(user_input, df, chat_history, api_key1):
     client= OpenAI(api_key=api_key1)
-    
-    
+
     #openai.api_key = api_key1
 
-    
     #Generate Python code to visualize or analyze the provided dataset based on the user's query.
 
     #Args:
@@ -107,6 +101,7 @@ If the user's request is ambiguous or if you need more information to generate a
             {"role": "user", "content": prompt},
         ],
     )
+    
 
     try:
         generated_text = response.choices[0].message.content

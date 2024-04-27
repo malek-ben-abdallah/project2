@@ -223,17 +223,17 @@ def main():
 
 
 
-   for message in st.session_state.messages:
-        with st.container():
-            if message["role"] == "user":
-                st.write(f"**Your Query:** {message['content']}")
-            elif message["role"] == "assistant":
-                generated_text= message['content']
-                #st.write(f"Assistant: {message['content']}")
-                st.write("**Answer:** ")
-                plot_area = st.empty()
-                plot_area.pyplot(exec(extract_python_code(generated_text)))
-
+       for message in st.session_state.messages:
+            with st.container():
+                if message["role"] == "user":
+                    st.write(f"**Your Query:** {message['content']}")
+                elif message["role"] == "assistant":
+                    generated_text= message['content']
+                    #st.write(f"Assistant: {message['content']}")
+                    st.write("**Answer:** ")
+                    plot_area = st.empty()
+                    plot_area.pyplot(exec(extract_python_code(generated_text)))
+    
 
         
     ### Display Chat History
@@ -242,6 +242,5 @@ def main():
         st.write(st.session_state.chat_history)  
 
 
-    
 if __name__ == "__main__":
     main()

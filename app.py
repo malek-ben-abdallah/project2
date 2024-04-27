@@ -219,8 +219,7 @@ def main():
 
         for message in st.session_state.messages:
 
-            if "messages" not in st.session_state:
-                st.session_state.messages = []
+
 
             with st.container():
                 if message["role"] == "user":

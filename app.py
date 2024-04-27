@@ -170,9 +170,6 @@ def main():
     # Get the User OpenAI key
     api_key1 = st.text_input("Enter your OpenAI API key:", type="password")
 
-    # Upload CSV file
-    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
         st.write("Dataset:")
@@ -204,10 +201,10 @@ def main():
                     st.error(f"Error executing the generated code: {e}")
                     st.code(traceback.format_exc())
 
-    # Display Chat History
-    if st.button("Show Chat History"):
-        st.subheader("Chat History")
-        st.write(st.session_state.chat_history)  
+        # Display Chat History
+        if st.button("Show Chat History"):
+            st.subheader("Chat History")
+            st.write(st.session_state.chat_history)  
 
 
 

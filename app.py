@@ -234,7 +234,8 @@ def main():
                     plot_area = st.empty()
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
 
-        
+    st.subheader('Queries2')
+  
     ### Display Chat History
     if st.button("Show Chat History"):
         st.subheader("Chat History")

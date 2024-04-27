@@ -173,12 +173,7 @@ def main():
         st.write(df.head())
         chat_history = []
         
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
 
-        ## Create a session for the user to ask multiple questions 
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
         
         user_input = st.text_input("What's your query?")
 
@@ -216,11 +211,10 @@ def main():
                     st.write("**Answer:** ")
                     plot_area = st.empty()
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
-                    
+
+
         ### in this part, we can see the chat history between the user and the model 
         st.subheader('Queries')
-
-
 
         
     ### Display Chat History

@@ -227,10 +227,10 @@ def main():
         st.subheader("Chat History")
         st.write(st.session_state.chat_history)  
 
-st.subheader('Querie2s')
+   st.subheader('Querie2s')
 
 
-    for message in st.session_state.messages:
+   for message in st.session_state.messages:
         with st.container():
             if message["role"] == "user":
                 st.write(f"**Your Query:** {message['content']}")

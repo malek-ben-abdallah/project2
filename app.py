@@ -245,10 +245,10 @@ for message in st.session_state.messages:
 
 
     
-    st.subheader('Queries2')
+st.subheader('Queries2')
   
     ### Display Chat History
-    if st.button("Show Chat History"):
+if st.button("Show Chat History"):
         st.subheader("Chat History")
         st.write(st.session_state.chat_history)  
     

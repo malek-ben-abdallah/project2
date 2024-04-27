@@ -3,7 +3,6 @@ import pandas as pd
 from openai import OpenAI
 import re
 import traceback
-import sys
 
 # Set up the OpenAI API key
 def generate_code(user_input, df, chat_history, api_key1):

@@ -188,7 +188,9 @@ def main():
             generated_text, generated_code, _, error_message = generate_code(user_input, df, st.session_state.chat_history, api_key1)
     
             if generated_code:
-                st.session_state.chat_history.append({"role": "assistant", "content": generated_text})
+                # Check if the assistant's response is not already in the chat history
+                if not any(message["content"] == generated_text for message in st.session_state.chat_history):
+                    st.session_state.chat_history.append({"role": "assistant", "content": generated_text})
     
                 # Print the code in the response output
                 st.markdown(generated_text)
@@ -208,6 +210,7 @@ def main():
     if st.button("Show Chat History"):
         st.subheader("Chat History")
         st.write(st.session_state.chat_history)  
+  
     
 if __name__ == "__main__":
     main()

@@ -1,3 +1,5 @@
+#### working code ###
+
 import streamlit as st
 import pandas as pd
 import openai
@@ -153,6 +155,7 @@ def extract_python_code(text):
     return extracted_code.strip()
 
 
+
 ########### Main Function ##############
 
 import uuid  # Import the uuid module to generate unique identifiers
@@ -179,8 +182,15 @@ def main():
         ## Create a session for the user to ask multiple questions 
         if "chat_history" not in st.session_state:
             st.session_state.chat_history = []
+
+
+
+        
+
         
         user_input = st.text_input("What's your query?")
+
+
 
         if st.button("Submit"):
             st.session_state.chat_history.append({"role": "user", "content": user_input})
@@ -206,13 +216,14 @@ def main():
 
         ## Create a session for the user to ask multiple questions 
 
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
+  
+        ### in this part, we can see the chat history between the user and the model 
+        st.subheader('Queries')
 
-        ## Create a session for the user to ask multiple questions 
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
         for message in st.session_state.messages:
+
+
+
             with st.container():
                 if message["role"] == "user":
                     st.write(f"**Your Query:** {message['content']}")
@@ -223,12 +234,11 @@ def main():
                     plot_area = st.empty()
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
 
-
-        ### in this part, we can see the chat history between the user and the model 
-        st.subheader('Queries2')
-
         
-
+    ### Display Chat History
+    if st.button("Show Chat History"):
+        st.subheader("Chat History")
+        st.write(st.session_state.chat_history)  
     
 if __name__ == "__main__":
     main()

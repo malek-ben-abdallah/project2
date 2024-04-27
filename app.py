@@ -205,7 +205,13 @@ def main():
                     st.code(traceback.format_exc())
 
         ## Create a session for the user to ask multiple questions 
-        
+
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+
+        ## Create a session for the user to ask multiple questions 
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
         for message in st.session_state.messages:
             with st.container():
                 if message["role"] == "user":

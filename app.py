@@ -224,7 +224,6 @@ def main():
 """
 
 ### in this part, we can see the chat history between the user and the model 
-    st.subheader('Queries')
 
         for message in st.session_state.messages:
 

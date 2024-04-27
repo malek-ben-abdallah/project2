@@ -225,10 +225,8 @@ def main():
 
 ### in this part, we can see the chat history between the user and the model 
 
-        for message in st.session_state.messages:
-
-
-            with st.container():
+    for message in st.session_state.messages:
+        with st.container():
                 if message["role"] == "user":
                     st.write(f"**Your Query:** {message['content']}")
                 elif message["role"] == "assistant":

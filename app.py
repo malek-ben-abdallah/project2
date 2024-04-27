@@ -174,37 +174,41 @@ def main():
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
     if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
-        st.write("Dataset:")
-        st.write(df.head())
-        
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
+    df = pd.read_csv(uploaded_file)
+    st.write("Dataset:")
+    st.write(df.head())
     
-        user_input = st.text_input("What's your query?")
-    
-        if st.button("Submit"):
-            st.session_state.chat_history.append({"role": "user", "content": user_input})
-            generated_text, generated_code, _, error_message = generate_code(user_input, df, st.session_state.chat_history, api_key1)
-    
-            if generated_code:
-                # Check if the assistant's response is not already in the chat history
-                if not any(message["content"] == generated_text for message in st.session_state.chat_history):
-                    st.session_state.chat_history.append({"role": "assistant", "content": generated_text})
-    
-                # Print the code in the response output
-                st.markdown(generated_text)
-    
-                # Plot the visualization directly 
-                plot_area = st.empty()
-                plot_area.pyplot(exec(generated_code))   
-    
-                try:
-                    exec(generated_code)
-                    st.success("Code ran smoothly.")
-                except Exception as e:
-                    st.error(f"Error executing the generated code: {e}")
-                    st.code(traceback.format_exc())
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+
+    user_input = st.text_input("What's your query?")
+
+    if st.button("Submit"):
+        st.session_state.chat_history.append({"role": "user", "content": user_input})
+        generated_text, generated_code, _, error_message = generate_code(user_input, df, st.session_state.chat_history, api_key1)
+
+        if generated_code:
+            st.session_state.chat_history.append({"role": "assistant", "content": generated_text})
+
+            # Print the code in the response output
+            st.markdown(generated_text)
+
+            # Plot the visualization directly 
+            plot_area = st.empty()
+            plot_area.pyplot(exec(generated_code))   
+
+            try:
+                exec(generated_code)
+                st.success("Code ran smoothly.")
+            except Exception as e:
+                st.error(f"Error executing the generated code: {e}")
+                st.code(traceback.format_exc())
+
+    # Display Chat History
+    if st.button("Show Chat History"):
+        st.subheader("Chat History")
+        st.write(st.session_state.chat_history)  
+
 
     # Display Chat History
     if st.button("Show Chat History"):

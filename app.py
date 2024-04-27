@@ -221,12 +221,6 @@ def main():
 
 
 
-        
-    ### Display Chat History
-    if st.button("Show Chat History"):
-        st.subheader("Chat History")
-        st.write(st.session_state.chat_history)  
-
 
 
    for message in st.session_state.messages:
@@ -239,6 +233,15 @@ def main():
                 st.write("**Answer:** ")
                 plot_area = st.empty()
                 plot_area.pyplot(exec(extract_python_code(generated_text)))
+
+
+        
+    ### Display Chat History
+    if st.button("Show Chat History"):
+        st.subheader("Chat History")
+        st.write(st.session_state.chat_history)  
+
+
     
 if __name__ == "__main__":
     main()

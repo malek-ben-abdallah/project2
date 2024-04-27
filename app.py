@@ -223,7 +223,7 @@ def main():
                     plot_area.pyplot(exec(extract_python_code(generated_text)))
 """
 
-### in this part, we can see the chat history between the user and the model 
+    ### in this part, we can see the chat history between the user and the model 
 
     for message in st.session_state.messages:
         with st.container():

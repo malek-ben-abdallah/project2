@@ -174,7 +174,9 @@ def main():
         st.write("Dataset:")
         st.write(df.head())
         chat_history = []
-
+        
+            if "messages" not in st.session_state:
+                st.session_state.messages = []
 
         ## Create a session for the user to ask multiple questions 
         if "chat_history" not in st.session_state:

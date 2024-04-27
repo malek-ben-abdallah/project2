@@ -227,7 +227,6 @@ def main():
         st.subheader("Chat History")
         st.write(st.session_state.chat_history)  
 
-      st.subheader('Querie2s')
 
 
    for message in st.session_state.messages:
